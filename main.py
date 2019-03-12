@@ -1,4 +1,7 @@
+import asyncio
 from aiohttp import web
+
+loop = asyncio.get_event_loop()
 
 
 async def handler(request):
@@ -7,7 +10,7 @@ async def handler(request):
     return web.Response(text=text)
 
 
-app = web.Application()
+app = web.Application(loop=loop)
 app.router.add_route('GET', '/', handler)
 app.router.add_route('GET', '/{name}', handler)
 # app.router.add_route('GET', '/company',)

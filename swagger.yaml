@@ -1,0 +1,154 @@
+swagger: 2.0
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: ''
+  description: ''
+paths:
+  /company:
+    get:
+      summary: Get company list
+      responses:
+        '200':
+          description: '{company_id: company_name}'
+  /company/{id}:
+    get:
+      summary: Get company name by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company_id:
+                    type: integer
+                  company_name:
+                    type: string
+  /company/add:
+    post:
+      summary: Add new company
+      parameters:
+        - name: company_name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Company was added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company_id:
+                    type: integer
+                  company_name:
+                    type: string
+  /employee/add:
+    post:
+      summary: Add new employee
+      parameters:
+      - name: employee_name
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Employee was added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employee_id:
+                    type: integer
+                  employee_name:
+                    type: string
+  /employee/assign:
+    put:
+      summary: Assign employee to company
+      parameters:
+        - name: employee_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Employee was successfully assigned to company.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employee_id:
+                    type: integer
+                  company_id:
+                    type: integer
+  /company/goods/add:
+    post:
+      summary: Add new item
+      parameters:
+      - name: company_id
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: item_name
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Item was added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item_id:
+                    type: integer
+                  company_id:
+                    type: integer
+  /company/goods/assign:
+    put:
+      summary: Assign employee to item
+      parameters:
+        - name: item_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: employee_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item was successfully assigned to employee.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item_id:
+                    type: integer
+                  employee_id:
+                    type: integer

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, MetaData
 
-from aiohttpdemo_polls.db import question, choice
-from aiohttpdemo_polls.settings import BASE_DIR, get_config
+from models import company, employee, goods
+from config.settings import BASE_DIR, get_config, config_path
 
 
 DSN = "postgresql://{user}:{password}@{host}:{port}/{database}"
@@ -13,15 +13,15 @@ ADMIN_DB_URL = DSN.format(
 
 admin_engine = create_engine(ADMIN_DB_URL, isolation_level='AUTOCOMMIT')
 
-USER_CONFIG_PATH = BASE_DIR / 'config' / 'polls.yaml'
-USER_CONFIG = get_config(['-c', USER_CONFIG_PATH.as_posix()])
+USER_CONFIG_PATH = BASE_DIR / 'config' / 'api.yaml'
+USER_CONFIG = get_config(config_path)
 USER_DB_URL = DSN.format(**USER_CONFIG['postgres'])
 user_engine = create_engine(USER_DB_URL)
-
-TEST_CONFIG_PATH = BASE_DIR / 'config' / 'polls_test.yaml'
-TEST_CONFIG = get_config(['-c', TEST_CONFIG_PATH.as_posix()])
-TEST_DB_URL = DSN.format(**TEST_CONFIG['postgres'])
-test_engine = create_engine(TEST_DB_URL)
+#
+# TEST_CONFIG_PATH = BASE_DIR / 'config' / 'polls_test.yaml'
+# TEST_CONFIG = get_config(['-c', TEST_CONFIG_PATH.as_posix()])
+# TEST_DB_URL = DSN.format(**TEST_CONFIG['postgres'])
+# test_engine = create_engine(TEST_DB_URL)
 
 
 def setup_db(config):
@@ -56,26 +56,29 @@ def teardown_db(config):
     conn.close()
 
 
-def create_tables(engine=test_engine):
+def create_tables(engine=user_engine):
     meta = MetaData()
-    meta.create_all(bind=engine, tables=[question, choice])
+    meta.create_all(bind=engine, tables=[company, employee, goods])
 
 
-def drop_tables(engine=test_engine):
+def drop_tables(engine=user_engine):
     meta = MetaData()
-    meta.drop_all(bind=engine, tables=[question, choice])
+    meta.drop_all(bind=engine, tables=[company, employee, goods])
 
 
-def sample_data(engine=test_engine):
+def sample_data(engine=user_engine):
     conn = engine.connect()
-    conn.execute(question.insert(), [
-        {'question_text': 'What\'s new?',
-         'pub_date': '2015-12-15 17:17:49.629+02'}
+    conn.execute(company.insert(), [
+        {'name': 'Testompany'},
+        {'name': 'Another_test_company'}
     ])
-    conn.execute(choice.insert(), [
-        {'choice_text': 'Not much', 'votes': 0, 'question_id': 1},
-        {'choice_text': 'The sky', 'votes': 0, 'question_id': 1},
-        {'choice_text': 'Just hacking again', 'votes': 0, 'question_id': 1},
+    conn.execute(employee.insert(), [
+        {'name': 'Vasiliy', 'company': 1, 'phone': '+79991234567'},
+        {'name': 'Павел', 'company': None, 'phone': None}
+    ])
+    conn.execute(goods.insert(), [
+        {'name': 'Bike', 'employee': 1, 'company': 1},
+        {'name': 'Car', 'employee': None, 'company': 2}
     ])
     conn.close()
 

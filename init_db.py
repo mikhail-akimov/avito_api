@@ -4,7 +4,7 @@ from models import company, employee, goods
 from config.settings import BASE_DIR, get_config, config_path
 
 
-DSN = "postgresql://{user}:{password}@{host}:{port}/{database}"
+DSN = 'postgresql://{user}:{password}@{host}:{port}/{database}'
 
 ADMIN_DB_URL = DSN.format(
     user='postgres', password='postgres', database='postgres',
@@ -31,11 +31,11 @@ def setup_db(config):
     db_pass = config['password']
 
     conn = admin_engine.connect()
-    conn.execute("DROP DATABASE IF EXISTS %s" % db_name)
-    conn.execute("DROP ROLE IF EXISTS %s" % db_user)
-    conn.execute("CREATE USER %s WITH PASSWORD '%s'" % (db_user, db_pass))
-    conn.execute("CREATE DATABASE %s ENCODING 'UTF8'" % db_name)
-    conn.execute("GRANT ALL PRIVILEGES ON DATABASE %s TO %s" %
+    conn.execute('DROP DATABASE IF EXISTS %s' % db_name)
+    conn.execute('DROP ROLE IF EXISTS %s' % db_user)
+    conn.execute('CREATE USER %s WITH PASSWORD "%s"' % (db_user, db_pass))
+    conn.execute('CREATE DATABASE %s ENCODING "UTF8"' % db_name)
+    conn.execute('GRANT ALL PRIVILEGES ON DATABASE %s TO %s' %
                  (db_name, db_user))
     conn.close()
 
@@ -51,8 +51,8 @@ def teardown_db(config):
       FROM pg_stat_activity
       WHERE pg_stat_activity.datname = '%s'
         AND pid <> pg_backend_pid();""" % db_name)
-    conn.execute("DROP DATABASE IF EXISTS %s" % db_name)
-    conn.execute("DROP ROLE IF EXISTS %s" % db_user)
+    conn.execute('DROP DATABASE IF EXISTS %s' % db_name)
+    conn.execute('DROP ROLE IF EXISTS %s' % db_user)
     conn.close()
 
 

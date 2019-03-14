@@ -1,8 +1,20 @@
-from views import get_all_companies, get_company, add_company, get_all_employees, \
-    add_employee, assign_employee, add_item, assign_item
+# -*- coding: utf-8 -*-
+
+"""Routes for 'avito-api application."""
+from views import (
+    get_all_companies,
+    get_company,
+    add_company,
+    get_all_employees,
+    add_employee,
+    assign_employee,
+    add_item,
+    assign_item,
+)
 
 
 def setup_routes(app):
+    """Setting-up routes."""
     app.router.add_route('GET', '/company', get_all_companies)
     app.router.add_route('GET', '/company/{company_id}', get_company)
     app.router.add_route('POST', '/company/add', add_company)

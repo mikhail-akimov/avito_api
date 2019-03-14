@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+"""Config for 'avito_api' application."""
 import os
 import yaml
 import pathlib
@@ -7,8 +10,9 @@ config_path = os.path.join(BASE_DIR, 'config', 'api.yaml')
 
 
 def get_config(path):
-    with open(path) as f:
-        conf = yaml.load(f)
+    """Get settings from yaml-file."""
+    with open(path) as yf:
+        conf = yaml.safe_load(yf)
     return conf
 
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import asyncio
 from aiohttp import web
 from config.settings import config

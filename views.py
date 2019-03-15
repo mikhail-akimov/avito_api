@@ -14,12 +14,34 @@ from models import (
     insert_item,
     item_to_employee,
 )
+from validations import (
+    validate,
+    get_all_companies_output,
+    exceptions,
+    get_all_employees_output,
+    get_one_company_output,
+    add_company_input,
+    add_company_output,
+    add_employee_input,
+    add_employee_output,
+    assign_employee_input,
+    assign_employee_output,
+    add_item_input,
+    add_item_output,
+    assign_item_input,
+    assign_item_output,
+)
 
 
 async def get_all_companies(request):
     """Return list of all companies."""
     async with request.app['db'].acquire() as conn:
         companies_list = await select_all_companies(conn)
+        try:
+            validate(instance=companies_list, schema=get_all_companies_output)
+        except exceptions.ValidationError as ex:
+            error_message = 'Server returns invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
         return web.Response(text=json.dumps(companies_list))
 
 
@@ -31,6 +53,11 @@ async def get_company(request):
             select_result = await select_company(conn, company_id)
         except RecordNotFound as ex:
             raise web.HTTPNotFound(text=str(ex))
+        try:
+            validate(instance=select_result, schema=get_one_company_output)
+        except exceptions.ValidationError as ex:
+            error_message = 'Server returns invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
         return web.Response(text=json.dumps(select_result))
 
 
@@ -38,8 +65,18 @@ async def add_company(request):
     """Add company by name. Return company."""
     async with request.app['db'].acquire() as conn:
         post_body = await request.json()
-        company_name = post_body['company_name']
-        new_company = await insert_company(conn, company_name)
+        try:
+            validate(instance=post_body, schema=add_company_input)
+        except exceptions.ValidationError as ex:
+            error_message = 'Sorry, you send invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
+        else:
+            new_company = await insert_company(conn, post_body['company_name'])
+        try:
+            validate(instance=new_company, schema=add_company_output)
+        except exceptions.ValidationError as ex:
+            error_message = 'Server returns invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
         return web.Response(text=json.dumps(new_company))
 
 
@@ -47,6 +84,11 @@ async def get_all_employees(request):
     """Return all employees from DB."""
     async with request.app['db'].acquire() as conn:
         employees_list = await select_all_employees(conn)
+        try:
+            validate(instance=employees_list, schema=get_all_employees_output)
+        except exceptions.ValidationError as ex:
+            error_message = 'Server returns invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
         return web.Response(text=json.dumps(employees_list))
 
 
@@ -54,36 +96,81 @@ async def add_employee(request):
     """Add new employee by name. Return new employee."""
     async with request.app['db'].acquire() as conn:
         post_body = await request.json()
-        employee_name = post_body['employee_name']
-        new_employee = await insert_employee(conn, employee_name)
+        try:
+            validate(instance=post_body, schema=add_employee_input)
+        except exceptions.ValidationError as ex:
+            error_message = 'Sorry, you send invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
+        new_employee = await insert_employee(conn, post_body['employee_name'])
+        try:
+            validate(instance=new_employee, schema=add_employee_output)
+        except exceptions.ValidationError as ex:
+            error_message = 'Server returns invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
         return web.Response(text=json.dumps(new_employee))
 
 
 async def assign_employee(request):
-    """Assign employee to company. Return assigned employee."""
+    """Assign employee to company. Returns assigned 'employee'."""
     async with request.app['db'].acquire() as conn:
         post_body = await request.json()
-        employee_id = post_body['employee_id']
-        company_id = post_body['company_id']
-        new_assignee = await employee_to_company(conn, employee_id, company_id)
+        try:
+            validate(instance=post_body, schema=assign_employee_input)
+        except exceptions.ValidationError as ex:
+            error_message = 'Sorry, you send invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
+        new_assignee = await employee_to_company(
+            conn,
+            post_body['employee_id'],
+            post_body['company_id'],
+        )
+        try:
+            validate(instance=new_assignee, schema=assign_employee_output)
+        except exceptions.ValidationError as ex:
+            error_message = 'Server returns invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
         return web.Response(text=json.dumps(new_assignee))
 
 
 async def add_item(request):
-    """Add new item to company goods. Return item."""
+    """Add new item to company goods. Returns 'item'."""
     async with request.app['db'].acquire() as conn:
         post_body = await request.json()
-        item_name = post_body['item_name']
-        company_id = post_body['company_id']
-        new_item = await insert_item(conn, item_name, company_id)
+        try:
+            validate(instance=post_body, schema=add_item_input)
+        except exceptions.ValidationError as ex:
+            error_message = 'Sorry, you send invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
+        new_item = await insert_item(
+            conn,
+            post_body['item_name'],
+            post_body['company_id'],
+        )
+        try:
+            validate(instance=new_item, schema=add_item_output)
+        except exceptions.ValidationError as ex:
+            error_message = 'Server returns invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
         return web.Response(text=json.dumps(new_item))
 
 
 async def assign_item(request):
-    """Assign item to employee. Return item."""
+    """Assign item to employee. Returns assigned 'item'."""
     async with request.app['db'].acquire() as conn:
         post_body = await request.json()
-        item_id = post_body['item_id']
-        employee_id = post_body['employee_id']
-        new_assignee = await item_to_employee(conn, item_id, employee_id)
+        try:
+            validate(instance=post_body, schema=assign_item_input)
+        except exceptions.ValidationError as ex:
+            error_message = 'Sorry, you send invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
+        new_assignee = await item_to_employee(
+            conn,
+            post_body['item_id'],
+            post_body['employee_id'],
+        )
+        try:
+            validate(instance=new_assignee, schema=assign_item_output)
+        except exceptions.ValidationError as ex:
+            error_message = 'Server returns invalid data...\n{0}'.format(ex)
+            return web.Response(text=error_message)
         return web.Response(text=json.dumps(new_assignee))

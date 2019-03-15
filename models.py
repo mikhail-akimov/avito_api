@@ -77,6 +77,7 @@ async def select_company(conn, company_id):
         company.select().where(company.c.id == company_id)
     )
     first_row = await select_comp.first()
+    print(first_row)
     if first_row:
         comp = {'id': first_row[0],
                 'name': first_row[1],
@@ -90,11 +91,10 @@ async def select_company(conn, company_id):
 async def insert_company(conn, company_name):
     """Insert a new company to db by name."""
     try:
-        insert_comp = await conn.execute(
+        new_company = await conn.execute(
             company.insert({'name': company_name})
         )
-        new_company = insert_comp
-        if insert_comp.returns_rows:
+        if new_company.returns_rows:
             select_comp = await conn.execute(
                 company.select().where(company.c.name == company_name)
             )
@@ -116,19 +116,15 @@ async def select_all_employees(conn):
 async def insert_employee(conn, employee_name):
     """Insert a new employee to db by name."""
     try:
-        insert_emp = await conn.execute(
+        new_employee = await conn.execute(
             employee.insert({'name': employee_name})
         )
-        new_employee = insert_emp
-        if insert_emp.returns_rows:
+        if new_employee.returns_rows:
             select_emp = await conn.execute(
                 employee.select().where(employee.c.name == employee_name)
             )
             records = await select_emp.fetchall()
-            emp = [dict(emp) for emp in records][-1]
-            new_employee = {'id': emp['id'],
-                            'name': emp['name'],
-                            }
+            new_employee = [dict(emp) for emp in records][-1]
     except Exception as ex:
         new_employee = 'Error! {0}'.format(ex)
     return new_employee
@@ -163,11 +159,7 @@ async def insert_item(conn, item_name, company_id):
                 goods.select().where(goods.c.name == item_name)
             )
             records = await select_item.fetchall()
-            itm = [dict(itm) for itm in records][-1]
-            new_item = {'id': itm['id'],
-                        'name': itm['name'],
-                        'company': itm['company'],
-                        }
+            new_item = [dict(itm) for itm in records][-1]
     except Exception as ex:
         new_item = 'Error! {0}'.format(ex)
     return new_item

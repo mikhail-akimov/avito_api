@@ -58,6 +58,21 @@ paths:
                     type: integer
                   company_name:
                     type: string
+  /employee:
+    get:
+      summary: Get employee list
+      responses:
+        '200':
+          description: '{id: employee_id, name: employee_name}'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
   /employee/add:
     post:
       summary: Add new employee
@@ -80,9 +95,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  employee_id:
+                  id:
                     type: integer
-                  employee_name:
+                  name:
                     type: string
   /employee/assign:
     put:
@@ -109,10 +124,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  employee_id:
+                  id:
                     type: integer
-                  company_id:
+                  name:
+                    type: string
+                  comapny:
                     type: integer
+                  phone:
+                    type: string
   /company/goods/add:
     post:
       summary: Add new item
@@ -126,7 +145,7 @@ paths:
             - item_name
               company_id
           properties:
-            item_id:
+            item_name:
               type: integer
             company_id:
               type: integer
@@ -138,9 +157,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  item_id:
+                  id:
                     type: integer
-                  company_id:
+                  name:
+                    type: string
+                  company:
                     type: integer
   /company/goods/assign:
     put:

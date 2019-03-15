@@ -7,7 +7,7 @@ from routes import setup_routes
 from models import init_pg, close_pg
 
 loop = asyncio.get_event_loop()
-app = web.Application(loop=loop, debug=True)
+app = web.Application(loop=loop)
 app.on_startup.append(init_pg)
 app.on_cleanup.append(close_pg)
 setup_routes(app)

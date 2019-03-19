@@ -1,0 +1,25 @@
+version: "2.1"
+services:
+  db:
+    image: postgres
+    container_name: postgres
+    networks:
+      - api
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+  api:
+    image: api
+    container_name: api
+    networks:
+      - api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "db"
+networks:
+  api:
+    driver: bridge
+    name: api

@@ -2,7 +2,7 @@ postgres:
   database: avito_api
   user: api_user
   password: api_password
-  host: localhost
+  host: postgres
   port: 5432
   minsize: 1
   maxsize: 5

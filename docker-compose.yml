@@ -11,7 +11,9 @@ services:
     ports:
       - "5432:5432"
   api:
-    image: api
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: api
     networks:
       - api

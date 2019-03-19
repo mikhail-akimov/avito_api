@@ -91,14 +91,14 @@ def sample_data(engine=user_engine):
 
 
 def container_start():
-    if not check_db(engine=user_engine):
+    try:
+        check_db(engine=user_engine)
+    except Exception:
         setup_db(USER_CONFIG['postgres'])
         create_tables(engine=user_engine)
         sample_data(engine=user_engine)
         # drop_tables()
         # teardown_db(config)
-    else:
-        print('No need to init!')
     return True
 
 

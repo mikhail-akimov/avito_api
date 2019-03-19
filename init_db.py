@@ -24,8 +24,16 @@ user_engine = create_engine(USER_DB_URL)
 # test_engine = create_engine(TEST_DB_URL)
 
 
-def setup_db(config):
+def check_db(config):
+    db_name = config['database']
+    conn = admin_engine.connect()
+    if conn.select('SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME="%s"' % db_name):
+        return True
+    else:
+        return False
 
+
+def setup_db(config):
     db_name = config['database']
     db_user = config['user']
     db_pass = config['password']
@@ -84,9 +92,10 @@ def sample_data(engine=user_engine):
 
 
 if __name__ == '__main__':
-
-    setup_db(USER_CONFIG['postgres'])
-    create_tables(engine=user_engine)
-    sample_data(engine=user_engine)
-    # drop_tables()
-    # teardown_db(config)
+    print(check_db(USER_CONFIG['postgres']))
+    if not check_db(USER_CONFIG['postgres']):
+        setup_db(USER_CONFIG['postgres'])
+        create_tables(engine=user_engine)
+        sample_data(engine=user_engine)
+        # drop_tables()
+        # teardown_db(config)

@@ -24,10 +24,9 @@ user_engine = create_engine(USER_DB_URL)
 # test_engine = create_engine(TEST_DB_URL)
 
 
-def check_db(config):
-    db_name = config['database']
-    conn = admin_engine.connect()
-    if conn.select('SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME="%s"' % db_name):
+def check_db(engine=user_engine):
+    conn = engine.connect()
+    if conn:
         return True
     else:
         return False
@@ -91,11 +90,24 @@ def sample_data(engine=user_engine):
     conn.close()
 
 
-if __name__ == '__main__':
-    print(check_db(USER_CONFIG['postgres']))
-    if not check_db(USER_CONFIG['postgres']):
+def container_start():
+    if not check_db(engine=user_engine):
         setup_db(USER_CONFIG['postgres'])
         create_tables(engine=user_engine)
         sample_data(engine=user_engine)
         # drop_tables()
         # teardown_db(config)
+    else:
+        print('No need to init!')
+    return True
+
+
+if __name__ == '__main__':
+    if not check_db(engine=user_engine):
+        setup_db(USER_CONFIG['postgres'])
+        create_tables(engine=user_engine)
+        sample_data(engine=user_engine)
+        # drop_tables()
+        # teardown_db(config)
+    else:
+        print('No need to init!')

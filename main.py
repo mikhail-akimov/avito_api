@@ -5,6 +5,7 @@ from aiohttp import web
 from config.settings import config
 from routes import setup_routes
 from models import init_pg, close_pg
+from init_db import container_start
 
 
 loop = asyncio.get_event_loop()
@@ -15,4 +16,5 @@ setup_routes(app)
 app['config'] = config
 
 if __name__ == '__main__':
+    container_start()
     web.run_app(app)

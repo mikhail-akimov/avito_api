@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from time import sleep
 import asyncio
 from aiohttp import web
 from config.settings import config
@@ -16,6 +17,7 @@ setup_routes(app)
 app['config'] = config
 
 if __name__ == '__main__':
+    sleep(10) # жуткий костыль, но ничего другого я не придумал
     container_start()
     web.run_app(app)
 

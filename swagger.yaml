@@ -36,11 +36,16 @@ paths:
     post:
       summary: Add new company
       parameters:
-        - name: company_name
-          in: query
+        - name: company
+          in: body
           required: true
           schema:
-            type: string
+            type: object
+            required:
+              - company_name
+            properties:
+              company_name:
+                type: string
       responses:
         '200':
           description: Company was added successfully.
@@ -53,15 +58,35 @@ paths:
                     type: integer
                   company_name:
                     type: string
+  /employee:
+    get:
+      summary: Get employee list
+      responses:
+        '200':
+          description: '{id: employee_id, name: employee_name}'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
   /employee/add:
     post:
       summary: Add new employee
       parameters:
-      - name: employee_name
-        in: query
+      - name: new_employee
+        in: body
         required: true
         schema:
-          type: string
+          type: object
+          required:
+            - employee_name
+          properties:
+            employee_name:
+              type: string
       responses:
         '200':
           description: Employee was added successfully.
@@ -70,24 +95,27 @@ paths:
               schema:
                 type: object
                 properties:
-                  employee_id:
+                  id:
                     type: integer
-                  employee_name:
+                  name:
                     type: string
   /employee/assign:
     put:
       summary: Assign employee to company
       parameters:
-        - name: employee_id
-          in: query
+        - name: employee_to_company
+          in: body
           required: true
           schema:
-            type: integer
-        - name: company_id
-          in: query
-          required: true
-          schema:
-            type: integer
+            type: object
+            required:
+              - employee_id
+                company_id
+            properties:
+              employee_id:
+                type: integer
+              company_id:
+                type: integer
       responses:
         '200':
           description: Employee was successfully assigned to company.
@@ -96,24 +124,31 @@ paths:
               schema:
                 type: object
                 properties:
-                  employee_id:
+                  id:
                     type: integer
-                  company_id:
+                  name:
+                    type: string
+                  comapny:
                     type: integer
+                  phone:
+                    type: string
   /company/goods/add:
     post:
       summary: Add new item
       parameters:
-      - name: company_id
-        in: query
+      - name: new_item
+        in: body
         required: true
         schema:
           type: integer
-      - name: item_name
-        in: query
-        required: true
-        schema:
-          type: string
+          required:
+            - item_name
+              company_id
+          properties:
+            item_name:
+              type: integer
+            company_id:
+              type: integer
       responses:
         '200':
           description: Item was added successfully.
@@ -122,24 +157,29 @@ paths:
               schema:
                 type: object
                 properties:
-                  item_id:
+                  id:
                     type: integer
-                  company_id:
+                  name:
+                    type: string
+                  company:
                     type: integer
   /company/goods/assign:
     put:
-      summary: Assign employee to item
+      summary: Assign item to employee
       parameters:
-        - name: item_id
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: employee_id
-          in: query
-          required: true
-          schema:
-            type: integer
+      - name: item_to_employee
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+          - item_id
+            employee_id
+          properties:
+            item_id:
+              type: integer
+            employee_id:
+              type: integer
       responses:
         '200':
           description: Item was successfully assigned to employee.

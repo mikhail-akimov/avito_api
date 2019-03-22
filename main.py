@@ -1,21 +1,23 @@
+# -*- coding: utf-8 -*-
+
+from time import sleep
+import asyncio
 from aiohttp import web
+from config.settings import config
+from routes import setup_routes
+from models import init_pg, close_pg
+from init_db import container_start
 
 
-async def handler(request):
-    name = request.match_info.get('name', "Anonymous")
-    text = 'Hello, ' + name
-    return web.Response(text=text)
+loop = asyncio.get_event_loop()
+app = web.Application(loop=loop)
+app.on_startup.append(init_pg)
+app.on_cleanup.append(close_pg)
+setup_routes(app)
+app['config'] = config
 
+if __name__ == '__main__':
+    sleep(10) # жуткий костыль, но ничего другого я не придумал
+    container_start()
+    web.run_app(app)
 
-app = web.Application()
-app.router.add_route('GET', '/', handler)
-app.router.add_route('GET', '/{name}', handler)
-# app.router.add_route('GET', '/company',)
-# app.router.add_route('GET', '/company/{company_id}',)
-# app.router.add_route('POST', '/company/add',)
-# app.router.add_route('POST', '/employee/add')
-# app.router.add_route('PUT', '/employee/assign')
-# app.router.add_route('POST', '/company/goods/add')
-# app.router.add_route('PUT', '/company/goods/assign')
-
-web.run_app(app)
